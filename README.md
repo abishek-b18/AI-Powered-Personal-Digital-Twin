@@ -311,5 +311,3 @@ This project covers concepts from:
 The AI-Powered Personal Digital Twin represents the future of personalized AI systems by creating a virtual representation of a user capable of learning, predicting, and assisting in everyday decision-making. By combining Artificial Intelligence, Predictive Analytics, and Data Visualization, the platform provides a comprehensive solution for productivity enhancement, personal growth, and intelligent decision support.
 
 ---
-
-### If you like this project, don't forget to ⭐ the repository!
