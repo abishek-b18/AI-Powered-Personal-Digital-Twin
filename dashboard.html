@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Digital Twin AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="dashboard-container">
+
+    <!-- Sidebar -->
+
+    <aside class="sidebar">
+
+        <h2>🤖 Digital Twin</h2>
+
+        <ul>
+            <li><a href="/dashboard">Dashboard</a></li>
+            <li><a href="/analytics">Analytics</a></li>
+            <li><a href="#">Goals</a></li>
+            <li><a href="#">Activities</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+
+    </aside>
+
+    <!-- Main Content -->
+
+    <main class="main-content">
+
+        <!-- Header -->
+
+        <div class="dashboard-header">
+
+            <h1>
+                Welcome,
+                {{ session['user_name'] }}
+            </h1>
+
+            <p>
+                Your AI Digital Twin is actively learning
+                from your activities and goals.
+            </p>
+
+        </div>
+
+        <!-- Statistics -->
+
+        <div class="stats-grid">
+
+            <div class="dashboard-card">
+                <h2>{{ productivity_score }}%</h2>
+                <p>Productivity Score</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h2>{{ goals|length }}</h2>
+                <p>Total Goals</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h2>{{ activities|length }}</h2>
+                <p>Total Activities</p>
+            </div>
+
+            <div class="dashboard-card">
+                <h2>95%</h2>
+                <p>Prediction Accuracy</p>
+            </div>
+
+        </div>
+
+        <!-- Add Goal -->
+
+        <section class="section-card">
+
+            <h2>Add New Goal</h2>
+
+            <form action="/add_goal" method="POST">
+
+                <input type="text"
+                       name="title"
+                       placeholder="Goal Title"
+                       required>
+
+                <textarea
+                    name="description"
+                    placeholder="Goal Description"
+                    required>
+                </textarea>
+
+                <button type="submit">
+                    Add Goal
+                </button>
+
+            </form>
+
+        </section>
+
+        <!-- Goal Table -->
+
+        <section class="section-card">
+
+            <h2>Your Goals</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Progress</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for goal in goals %}
+
+                    <tr>
+
+                        <td>{{ goal.title }}</td>
+                        <td>{{ goal.description }}</td>
+                        <td>{{ goal.status }}</td>
+
+                        <td>
+                            {{ goal.progress }}%
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+        <!-- Add Activity -->
+
+        <section class="section-card">
+
+            <h2>Add Activity</h2>
+
+            <form action="/add_activity" method="POST">
+
+                <input type="text"
+                       name="activity_name"
+                       placeholder="Activity Name"
+                       required>
+
+                <input type="number"
+                       name="duration"
+                       placeholder="Duration (minutes)"
+                       required>
+
+                <button type="submit">
+                    Add Activity
+                </button>
+
+            </form>
+
+        </section>
+
+        <!-- Activity Table -->
+
+        <section class="section-card">
+
+            <h2>Recent Activities</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Activity</th>
+                        <th>Duration</th>
+                        <th>Date</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for activity in activities %}
+
+                    <tr>
+
+                        <td>
+                            {{ activity.activity_name }}
+                        </td>
+
+                        <td>
+                            {{ activity.duration }} min
+                        </td>
+
+                        <td>
+                            {{ activity.activity_date }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+        <!-- Productivity Chart -->
+
+        <section class="section-card">
+
+            <h2>Weekly Productivity</h2>
+
+            <canvas id="productivityChart"></canvas>
+
+        </section>
+
+        <!-- AI Insights -->
+
+        <section class="section-card">
+
+            <h2>AI Insights</h2>
+
+            <ul id="insights-list">
+
+                <li>Loading AI Insights...</li>
+
+            </ul>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+
+const ctx =
+document.getElementById('productivityChart');
+
+new Chart(ctx, {
+
+    type: 'line',
+
+    data: {
+
+        labels: [
+            'Mon',
+            'Tue',
+            'Wed',
+            'Thu',
+            'Fri',
+            'Sat',
+            'Sun'
+        ],
+
+        datasets: [{
+
+            label: 'Productivity',
+
+            data: [
+                65,
+                72,
+                78,
+                70,
+                85,
+                90,
+                88
+            ],
+
+            borderWidth: 3
+
+        }]
+
+    }
+
+});
+
+fetch('/api/insights')
+
+.then(response => response.json())
+
+.then(data => {
+
+    const list =
+    document.getElementById('insights-list');
+
+    list.innerHTML = '';
+
+    data.forEach(item => {
+
+        const li =
+        document.createElement('li');
+
+        li.innerText = item;
+
+        list.appendChild(li);
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
